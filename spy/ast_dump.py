@@ -74,24 +74,31 @@ class Dumper(TextBuilder):
         if node is self.highlight:
             color = 'red'
 
-        if isinstance(node, spy.ast.Expr) and node.xxx_color is not None:
-            color = node.xxx_color
+        # OPTION 1: just use the xxx_color for the node name
+        ## if isinstance(node, spy.ast.Expr) and node.xxx_color is not None:
+        ##     color = node.xxx_color
 
-        self.write(name, color=color)
-        self.write('(')
-        if multiline:
-            self.writeline('')
-        with self.indent():
-            for field, value in zip(fields, values):
-                is_last = (field is fields[-1])
-                self.write(f'{field}=')
-                self.dump_anything(value)
-                if multiline:
-                    self.writeline(',')
-                elif not is_last:
-                    # single line
-                    self.write(', ')
-        self.write(')')
+        # OPTION 2: use the xxx_color as bg for the whole node
+        bg = None
+        if isinstance(node, spy.ast.Expr) and node.xxx_color is not None:
+            bg = node.xxx_color
+
+        with self.color(bg=bg):
+            self.write(name) #, color=color)
+            self.write('(')
+            if multiline:
+                self.writeline('')
+            with self.indent():
+                for field, value in zip(fields, values):
+                    is_last = (field is fields[-1])
+                    self.write(f'{field}=')
+                    self.dump_anything(value)
+                    if multiline:
+                        self.writeline(',')
+                    elif not is_last:
+                        # single line
+                        self.write(', ')
+            self.write(')')
 
     def dump_list(self, lst: list[Any]) -> None:
         if lst == []:
