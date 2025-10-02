@@ -59,17 +59,23 @@ class Context:
     Keep track of things like the mapping from W_* types to C types.
     """
     vm: SPyVM
-    tbh_includes: TextBuilder
+    current_modname: str         # the module we're currently writing
+    tbfwh_includes: TextBuilder  # includes in _fwdecls.h
+    tbh_includes: TextBuilder    # includes in .h
     tbh_types_decl: TextBuilder
     tbh_ptrs_def: TextBuilder
     tbh_types_def: TextBuilder
-    seen_modules: set[str]
+    seen_modules_fwh: set[str]   # modules included in _fwdecls.h
+    seen_modules: set[str]       # modules included in .h
     _d: dict[W_Type, C_Type]
 
-    def __init__(self, vm: SPyVM) -> None:
+    def __init__(self, vm: SPyVM, current_modname: str) -> None:
         self.vm = vm
+        self.current_modname = current_modname
+        self.seen_modules_fwh = set()
         self.seen_modules = set()
         # set by CModuleWriter.emit_header
+        self.tbfwh_includes = None # type: ignore
         self.tbh_includes = None   # type: ignore
         self.tbh_types_decl = None # type: ignore
         self.tbh_ptrs_def = None   # type: ignore
@@ -129,27 +135,38 @@ class Context:
         return C_Function(name, c_params, c_restype)
 
     def new_ptr_type(self, w_ptrtype: W_PtrType) -> C_Type:
-        self.add_include_maybe(w_ptrtype.w_itemtype.fqn)
+        self.add_fwdecls_include_maybe(w_ptrtype.w_itemtype.fqn)
         c_ptrtype = C_Type(w_ptrtype.fqn.c_name)
         self._d[w_ptrtype] = c_ptrtype
         return c_ptrtype
 
     def new_struct_type(self, w_st: W_StructType) -> C_Type:
-        self.add_include_maybe(w_st.fqn)
+        self.add_fwdecls_include_maybe(w_st.fqn)
         c_struct_type = C_Type(w_st.fqn.c_name)
         self._d[w_st] = c_struct_type
         return c_struct_type
 
     def new_lifted_type(self, w_hltype: W_LiftedType) -> C_Type:
-        self.add_include_maybe(w_hltype.fqn)
+        self.add_fwdecls_include_maybe(w_hltype.fqn)
         c_hltype = C_Type(w_hltype.fqn.c_name)
         self._d[w_hltype] = c_hltype
         return c_hltype
 
-    def add_include_maybe(self, fqn: FQN) -> None:
+    def add_fwdecls_include_maybe(self, fqn: FQN) -> None:
+        """Add an include to the _fwdecls.h file"""
         modname = fqn.modname
-        if modname in self.seen_modules:
-            # we already encountered this module, nothing to do
+        if modname in self.seen_modules_fwh or modname == self.current_modname:
+            return
+
+        self.seen_modules_fwh.add(modname)
+        w_mod = self.vm.modules_w[modname]
+        if not w_mod.is_builtin():
+            self.tbfwh_includes.wl(f'#include "{modname}_fwdecls.h"')
+
+    def add_include_maybe(self, fqn: FQN) -> None:
+        """Add an include to the .h file"""
+        modname = fqn.modname
+        if modname in self.seen_modules or modname == self.current_modname:
             return
 
         self.seen_modules.add(modname)
