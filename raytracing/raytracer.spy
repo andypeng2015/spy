@@ -128,15 +128,13 @@ def trace_ray(ray: Ray, objects: List[Object], light_dir: Vec3) -> Color:
     has_hit = False
     closest_hit = HitRecord(Vec3(0.0, 0.0, 0.0), Vec3(0.0, 0.0, 0.0), -1.0, Color(0.0, 0.0, 0.0))
 
-    i = 0
-    while i < len(objects):
+    for i in range(len(objects)):
         hit = object_intersect(objects[i], ray)
         if hit.t >= 0.0:
             if hit.t < closest_t:
                 closest_hit = hit
                 closest_t = hit.t
                 has_hit = True
-        i = i + 1
 
     if has_hit == False:
         # Sky gradient
@@ -186,11 +184,9 @@ def render(width: i32, height: i32) -> None:
     aspect_ratio = float(width) / float(height)
     fov = 3.14159265358979323846 / 3.0  # pi / 3
 
-    y = 0
-    while y < height:
+    for y in range(height):
         line = ''
-        x = 0
-        while x < width:
+        for x in range(width):
             # Calculate ray direction
             px = (2.0 * (float(x) + 0.5) / float(width) - 1.0) * aspect_ratio * tan(fov / 2.0)
             py = (1.0 - 2.0 * (float(y) + 0.5) / float(height)) * tan(fov / 2.0)
@@ -216,13 +212,9 @@ def render(width: i32, height: i32) -> None:
             # Use ANSI 24-bit color escape code to set background color
             line += '\033[48;2;' + str(r_int) + ';' + str(g_int) + ';' + str(b_int) + 'm '
 
-            x = x + 1
-
         # Reset color at end of line and print
         line += '\033[0m'
         print(line)
-
-        y = y + 1
 
 
 def main() -> None:
