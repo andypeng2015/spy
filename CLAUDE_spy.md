@@ -450,18 +450,17 @@ def object_intersect(obj: Object, ray: Ray) -> HitRecord:
 These features are **not yet implemented** but planned for the future:
 
 1. **Arbitrary-dimensional arrays**: Currently hardcoded for 1D, 2D, 3D
-2. **Automatic struct constructors**: Manual `__new__` required
 3. **Shape attribute for arrays**: No `.shape` property yet
 4. **Advanced operator overloading**: Limited metafunc support
 5. **Slicing**: No slice syntax support
-6. **String formatting**: Basic string operations only
+6. **String formatting**: You need to use "+" between strings
 7. **List comprehensions**: Not supported
 8. **Lambda expressions**: Not supported
 9. **Classes with inheritance**: No inheritance support
 10. **Variadic functions**: Limited support through metafunctions
 11. **Default arguments**: Not supported
 12. **Keyword arguments**: Not supported
-13. **Multiple return values** (without tuples): Use tuples instead
+13. **Multiple return values**: no support for tuples, use a struct.
 
 ## Best Practices
 
@@ -472,7 +471,7 @@ These features are **not yet implemented** but planned for the future:
 5. **Avoid redeclaration**: Don't redeclare variables in blue functions
 6. **Use generics for reusable code**: Leverage `@blue.generic` for type-safe abstractions
 7. **Metafunctions for polymorphism**: Use `@blue.metafunc` for operator overloading
-8. **Index bounds checking**: Always validate array/list indices
+8. **Index bounds checking**: Always validate indices for unsafe arrays.
 
 ## Common SPy Idioms
 
