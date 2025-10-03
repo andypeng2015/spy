@@ -5,6 +5,8 @@ SPy is a statically-typed variant of Python designed for performance-critical ap
 
 If during coding you encounter limitations and/or missing features, please add them to "Current limitations" section.
 
+If you need to understand more, feel free to all the *.spy files in the stdlib directory.
+
 ## Type System
 
 ### Primitive Types
