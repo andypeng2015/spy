@@ -5,10 +5,10 @@ SPy is a statically-typed variant of Python designed for performance-critical ap
 
 If during coding you encounter limitations and/or missing features, please add them to "Current limitations" section.
 
-If you need to understand more, feel free to read:
+To understand better, read:
   - stdlib/*.spy
   - examples/*.spy (WARNING: some of them are marked as "broken", ignore them)
-
+  - spy/tests/compiler/*.py. In particular, pay attention to which builtin modules/functions are available.
 
 
 ## `main` function
