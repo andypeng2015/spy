@@ -1,5 +1,6 @@
 """Animated bouncing ball demo using the raytracer"""
 
+import __spy__
 import os
 from _list import List
 from _range import range
@@ -67,13 +68,14 @@ def render_frame(width: i32, height: i32, ball_pos: Vec3) -> None:
 
 
 def animate() -> None:
-    # Get terminal size
     term_size = os.get_terminal_size()
     width = term_size.columns
     height = term_size.lines - 2
 
-    ## width = 30
-    ## height = 10
+    if __spy__.is_compiled() == False:
+        # interp mode is super slow, use a smaller size
+        width = 30
+        height = 10
 
     # Physics parameters
     gravity = 9.8
