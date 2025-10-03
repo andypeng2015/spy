@@ -515,6 +515,23 @@ These features are **not yet implemented** but planned for the future:
 13. **Multiple return values**: no support for tuples, use a struct.
 14. **Print arguments**: `print` takes only one argument
 
+## Struct field name scoping bug
+
+Due to a bug in the compiler, inside struct methods you cannot use local
+variables which have the same name of a field of the struct:
+
+```
+@struct
+class Point:
+    x: i32
+    y: i32
+
+    def foo(self: Point) -> i32:
+        x = self.x      # <<<< this causes a compiler crash, use a different name
+        return x + 1
+```
+
+
 ## Best Practices
 
 1. **Use explicit types**: Always annotate function signatures
