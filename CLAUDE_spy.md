@@ -552,7 +552,8 @@ These features are **not yet implemented** but planned for the future:
 5. **Avoid redeclaration**: Don't redeclare variables in blue functions
 6. **Use generics for reusable code**: Leverage `@blue.generic` for type-safe abstractions
 7. **Metafunctions for polymorphism**: Use `@blue.metafunc` for operator overloading
-8. **Index bounds checking**: Always validate indices for unsafe arrays.
+8. **Index bounds checking**: Always validate indices for unsafe arrays
+9. **Prefer `range()` over `while` for iteration**: Use `for i in range(...)` instead of manual `while` loops - it's more readable and compiles to equally efficient C code
 
 ## Common SPy Idioms
 
